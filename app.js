@@ -10,7 +10,7 @@ const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
 const methodoverride = require("method-override");
-const ejsMate = require("ejs-Mate");
+const ejsMate = require("ejs-mate");
 const listingsRouter = require("./routes/listings.js");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
@@ -24,7 +24,6 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 const userRouter = require("./routes/user.js");
-
 
 const dbUrl = process.env.ATLASDB_URL;
 
