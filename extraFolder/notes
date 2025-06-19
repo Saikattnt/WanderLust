@@ -1,0 +1,113 @@
+<!-- 1)GET requests are used to retrieve data, while POST requests are used to send data to a server for creation, modification, or deletion of resources.
+
+2)In HTML forms, the action and method attributes determine how form data is sent to a server. The action attribute specifies the URL where the form data should be sent, and the method attribute specifies the HTTP method used for sending the data, typically GET or POST.
+
+3)In HTML forms, the action and method attributes determine how form data is sent to a server. The action attribute specifies the URL where the form data should be sent, and the method attribute specifies the HTTP method used for sending the data, typically GET or POST.
+
+4)$ npm i ejs-mate (for installing ejsMate)
+
+5)font_awesome cdn
+
+6)We used two types of validations client side and server side
+
+7)Custom WrapAsync a better way of writing try-catch block
+
+8)Utils folder contains extra things
+
+9)with joi we create a schema for server side validation
+
+10)db.listings.updateMany({}, { $set: { reviews: [] } })
+
+11)db.reviews.deleteMany({})
+
+12))db.reviews.deleteOne({ _id: ObjectId("6847f1ecdc6d12a720821936") })
+
+ 13)Express ROuter are a way to Organize Your Express Applications such that our primary app.js file does not become bloated
+
+14)ctrl + D for matching word
+
+15) cookies used for session managment,personalization, tracking
+
+16)HTTP coookies are small blocks of data created by a web server while a user is browsing a website and place on the user's computer or other's device by the user's web browser.
+
+17)Mainly cookies helps to store info about the user who is currently accesing the web page
+
+18)$ npm i cookie-parser for middleware
+
+19)Cookies stores data about the user for eg if a user using instagram then then sookies will store data likes which post's user likes,saved post,prefernces etc.
+
+20)SignedCookies helps to prevent cookie tampering by unauthorized user's
+
+21)Express categorized the signed cookies and unsigned cookies
+
+22)Stateful Protocol(recommended)
+Stateful Protocol requires server to save the status and session information.eg-ftp
+
+23)Stateless Protocol
+Stateless Protocol doesn't require the server to retain the server information or status.eg-http
+
+24)Express Session stores info about a user session and make a id related to the info
+
+25)Express Session make a session id and send it to client to store info and then it send it back to sever again simulataneously to store the user browsing data
+
+26)Session id is stored in the form of the cookie
+
+27)Diff browser generate different seesion id but same browser with multiple tabs for a single user will generate the same session id's
+
+28)Flas-messages only appear one time in the page during error,deleting.inserting if you even refresh the page after that it will not appear
+
+29)Flash needs to be passed two parameters key and message
+
+30)cookie track session
+
+31)Hashing
+
+i)For every input, there is afixed string(output)
+
+ii)They are one-way-function,we can't get input from output
+
+iii)For a diff input, there is a diff output but of same length
+
+iv)Small changes in input should bring large changes in output. ex-SHA256,MD5,CRC
+
+32)Password salting is a technique to protect passwords stored in db by adding a string of 32 or more characters and then hashing them.
+
+33)Salting helps from reverse lookup table attacks
+
+34)What is a reverse lookup table?
+A reverse lookup table (often called a "precomputed hash table") is a table where attackers store common plaintext passwords and their corresponding hash values. This allows them to quickly look up a hash and find the original password without having to compute the hash each time.
+
+35)How does the attack work?
+The attacker gets access to a list of hashed passwords (e.g., from a database leak).
+They compare each hash to their precomputed table.
+If a hash matches one in the table, they instantly know the original password.
+
+36)passportjs.org
+
+37)npm i passport-local
+
+38)npm i passport
+
+39)npm i passport-local-mongoose
+
+40)passport-local-mongoose will automatically add a username, hash and salt field to store the username, so we don't have to define it
+
+41)passport.session=>A web app needs the ability to identify users as they browse from page to page. This series of requests and responses, each associated with the same user, is known as a session.
+
+42)To check if user is logged in?
+req.isAuthenticate() //Passport Method {check user info whether the user is authenticate or not }
+
+43)MVC(framework) design pattern-Model View Controller
+
+44)Project is implemented using the mvc framework
+
+45)https://github.com/LunarLogic/starability?tab=readme-ov-file (stying for review)
+
+46)to send any kind of file(image,audio,pdf) in html form we have to change the form encoding type to mlutiplart/form=data
+
+47)using multer to parse data
+
+48).env stores important variables that are confidential from outsiders
+
+49)Development phase is the phase where the project is under construction and production phase is the phase where the project is deployed and can be used by the real world ppl 
+-->
