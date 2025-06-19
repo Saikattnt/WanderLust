@@ -129,6 +129,10 @@ app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
 app.use("/", userRouter);
 
+app.post("/signup", (req, res) => {
+  res.render("users/signup"); // or wherever your signup.ejs is located
+});
+
 // app.get("/testListings", async (req, res) =>{
 //     let sampleListing = new Listing({
 //         title: "My new Villa",
@@ -143,9 +147,9 @@ app.use("/", userRouter);
 //     res.send("Successfull Testing")
 // });
 
-app.all("*", (req, res, next) => {
-  next(new ExpressError(404, "Page not Found!"));
-});
+// app.all("*", (req, res, next) => {
+//   next(new ExpressError(404, "Page not Found!"));
+// });
 
 app.use((err, req, res, next) => {
   //deconstructing express error
