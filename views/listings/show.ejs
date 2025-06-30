@@ -1,3 +1,115 @@
+<style>
+  .btn-addToCart {
+    background-color: #f5777b;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    border-radius: 20px;
+    padding: 0.9rem 1.2rem;
+    border: none;
+    width: auto;
+    font-size: 0.95rem;
+    min-width: 120px;
+    transition: background 0.2s;
+  }
+  .btn-addToCart:hover {
+    background-color: #fe424d;
+  }
+  .animated-button {
+    position: relative;
+    overflow: hidden;
+    color: white;
+    transition: all 0.4s ease;
+    text-align: center;
+  }
+
+  .animated-button .btn-text {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .animated-button .spinner,
+  .animated-button .checkmark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .spinner {
+    width: 22px;
+    height: 22px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  @keyframes spin {
+    to {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
+  .checkmark {
+    opacity: 0;
+  }
+
+  .checkmark svg {
+    width: 24px;
+    height: 24px;
+    stroke: white;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    stroke-dasharray: 24;
+    stroke-dashoffset: 24;
+    animation: none;
+  }
+
+  @keyframes draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* State: Loading (Spinner visible) */
+  .animated-button.loading {
+    background-color: #1a73e8 !important;
+    width: 60px;
+    padding: 0.9rem 0 !important;
+    border-radius: 50% !important;
+  }
+
+  .animated-button.loading .btn-text {
+    opacity: 0;
+  }
+
+  .animated-button.loading .spinner {
+    opacity: 1;
+  }
+
+  /* State: Success (Checkmark visible) */
+  .animated-button.success {
+    background-color: #4bb543 !important;
+  }
+
+  .animated-button.success .spinner {
+    opacity: 0;
+  }
+
+  .animated-button.success .checkmark {
+    opacity: 1;
+  }
+
+  .animated-button.success .checkmark svg {
+    animation: draw 0.5s ease forwards;
+  }
+</style>
 <%- layout("/layouts/boilerplate") %>
 <div class="row mt-3">
   <div class="col-8 offset-3">
@@ -38,6 +150,95 @@
         <br />
         Country:<i><b><%= listing.country %></b></i>
       </p>
+    </div>
+    <br />
+    <br />
+    <div>
+      <form id="addToCartForm" style="display: inline">
+        <button
+          type="button"
+          class="btn-addToCart animated-button"
+          id="addToCartBtn"
+          <% if (cart && cart.includes(listing._id.toString())) { %> data-gotocart="true" style="background-color:#198754;" <% } %>
+        >
+          <span class="btn-text">
+            <% if (cart && cart.includes(listing._id.toString())) { %>
+              Go to cart
+            <% } else { %>
+              Add to cart
+            <% } %>
+          </span>
+          <span class="spinner"></span>
+          <span class="checkmark">
+            <svg viewBox="0 0 24 24">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </span>
+        </button>
+      </form>
+      <script>
+        const addToCartBtn = document.getElementById("addToCartBtn");
+        const btnText = addToCartBtn.querySelector(".btn-text");
+        const spinner = addToCartBtn.querySelector(".spinner");
+        const checkmark = addToCartBtn.querySelector(".checkmark");
+        let added = addToCartBtn.dataset.gotocart === "true";
+
+        addToCartBtn.addEventListener("click", async function () {
+          if (added) {
+            window.location.href = "/listings/cart";
+            return;
+          }
+
+          // Start animation
+          addToCartBtn.classList.add("loading");
+          btnText.style.opacity = "0";
+          spinner.style.opacity = "1";
+          checkmark.style.opacity = "0";
+
+          // Simulate loading
+          setTimeout(() => {
+            addToCartBtn.classList.remove("loading");
+            addToCartBtn.classList.add("success");
+            spinner.style.opacity = "0";
+            checkmark.style.opacity = "1";
+          }, 500);
+
+          // After animation, send AJAX request and update button
+          setTimeout(async () => {
+            addToCartBtn.classList.remove("success");
+            checkmark.style.opacity = "0";
+            btnText.textContent = "Go to cart";
+            btnText.style.opacity = "1";
+            addToCartBtn.style.backgroundColor = "#198754";
+            added = true;
+
+            // AJAX POST to add to cart
+            const response = await fetch("/listings/<%= listing._id %>/add-to-cart", {
+              method: "POST",
+              headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "Content-Type": "application/json",
+              },
+            });
+            const data = await response.json();
+
+            // Show flash message
+            let flashDiv = document.createElement("div");
+            flashDiv.className = "alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3";
+            flashDiv.style.zIndex = 9999;
+            flashDiv.textContent = data.message;
+            document.body.appendChild(flashDiv);
+            setTimeout(() => flashDiv.remove(), 2000);
+
+            // Update cart badge
+            const badge = document.querySelector('.nav-link .badge');
+            if (badge) {
+              badge.textContent = data.cartCount;
+              badge.style.display = data.cartCount > 0 ? "inline-block" : "none";
+            }
+          }, 1200);
+        });
+      </script>
     </div>
   </div>
   <br />

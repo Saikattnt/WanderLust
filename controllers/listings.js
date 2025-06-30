@@ -9,19 +9,17 @@ module.exports.renderNewForm = (req, res) => {
   res.render("listings/new.ejs");
 };
 
-module.exports.ShowListing = async (req, res, next) => {
-  let { id } = req.params;
+module.exports.ShowListing = async (req, res) => {
+  const { id } = req.params;
   const listing = await Listing.findById(id)
-    .populate({
-      path: "reviews",
-      populate: { path: "author" },
-    })
+    .populate({ path: "reviews", populate: { path: "author" } })
     .populate("owner");
   if (!listing) {
-    req.flash("error", "Listing you are looking for does not exist");
+    req.flash("error", "Listing not found!");
     return res.redirect("/listings");
   }
-  res.render("listings/show.ejs", { listing });
+  const cart = req.session.cart || [];
+  res.render("listings/show.ejs", { listing, user: req.user, cart });
 };
 
 module.exports.createListing = async (req, res, next) => {
@@ -110,4 +108,42 @@ module.exports.searchListings = async (req, res) => {
     allListings = await Listing.find({});
   }
   res.render("listings/index", { allListings });
+};
+
+// Show Cart Page
+module.exports.showCart = async (req, res) => {
+  // Get cart from session (array of listing IDs)
+  const cart = req.session.cart || [];
+  // Fetch listings in the cart
+  const cartListings = await Listing.find({ _id: { $in: cart } });
+  res.render("listings/cart.ejs", { cartListings });
+};
+
+// Add to Cart Handler
+module.exports.addToCart = async (req, res) => {
+  const { id } = req.params;
+  if (!req.session.cart) req.session.cart = [];
+  if (!req.session.cart.includes(id)) {
+    req.session.cart.push(id);
+  }
+  const cartCount = req.session.cart.length;
+  if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+    // AJAX request: respond with JSON
+    return res.json({
+      message: "Listing added to cart!",
+      cartCount
+    });
+  }
+  req.flash("success", "Listing added to cart!");
+  res.redirect(`/listings/${id}`);
+};
+
+// Remove from Cart Handler
+module.exports.removeFromCart = async (req, res) => {
+  const { id } = req.params;
+  if (req.session.cart) {
+    req.session.cart = req.session.cart.filter(listingId => listingId.toString() !== id.toString());
+  }
+  req.flash("success", "Listing removed from cart!");
+  res.redirect("/listings/cart");
 };

@@ -29,7 +29,7 @@ module.exports.renderLogInForm = (req, res) => {
 
 module.exports.logIN = async (req, res) => {
   req.flash("success", "Welcome to Wanderlust!Ready for a trip again!");
-  res.redirect(res.locals.redirectUrl || "/listings"); // Redirect to requested url after successful login
+  res.redirect("/listings"); // Redirect to requested url after successful login
 };
 
 module.exports.logOut = (req, res, next) => {

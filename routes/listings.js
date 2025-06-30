@@ -50,6 +50,25 @@ router.get(
   listingController.renderNewForm
 );
 
+// Cart Page (GET)
+router.get(
+  "/cart",
+  isLoggedIn("You must be logged in to view cart"),
+  wrapAsync(listingController.showCart)
+);
+
+// Add to Cart (POST)
+router.post(
+  "/:id/add-to-cart",
+  isLoggedIn("You must be logged in to add to cart"),
+  wrapAsync(listingController.addToCart)
+);
+router.post(
+  "/:id/remove-from-cart",
+  isLoggedIn("You must be logged in to modify cart"),
+  wrapAsync(listingController.removeFromCart)
+);
+
 router
   .route("/:id")
   .get(wrapAsync(listingController.ShowListing))
@@ -73,6 +92,14 @@ router.get(
 );
 
 // Route to filter listings by category
-router.get("/category/:category", wrapAsync(listingController.filterByCategory));
+router.get(
+  "/category/:category",
+  wrapAsync(listingController.filterByCategory)
+);
+router.post("/rent/:id", (req, res) => {
+  res.redirect(
+    "/images/websites-why-you-should-never-use-under-construction-pages.jpg"
+  );
+});
 
 module.exports = router;

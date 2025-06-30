@@ -19,6 +19,11 @@
     border: 1px solid #ccc;
     width: 300px;
   }
+
+  /* Add to your style.css or in a <style> block */
+  .nav-link .badge {
+    pointer-events: none;
+  }
 </style>
 <nav class="navbar navbar-expand-md custom-navbar border-bottom sticky-top">
   <div class="container-fluid">
@@ -62,8 +67,20 @@
         </form>
       </div>
       <div class="nav-box ms-auto">
-        <a class="nav-link" href="/listings/new">Add New Listings</a>
+        <a class="nav-link position-relative" href="/listings/cart">
+          <img
+            src="/images/CartLogo.jpg"
+            alt="Cart"
+            style="width: 28px; height: 28px; object-fit: cover"
+          />
+          Cart
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.7em; <%= cartCount > 0 ? '' : 'display:none;' %>">
+            <%= cartCount %>
+          </span>
+        </a>
         <span class="nav-divider">|</span>
+        <a class="nav-link" href="/listings/new">Add New Listings</a>
+        <span class="nav-divider" style="margin-left: 8px">|</span>
         <% if (!user) { %>
         <a class="nav-link" href="/signup"><b>SignUp</b></a>
         <span class="nav-divider">|</span>

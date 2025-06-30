@@ -2,6 +2,10 @@ const Review = require("../models/review.js");
 const Listing = require("../models/listings.js");
 
 module.exports.createReview = async (req, res, next) => {
+  if (!req.user) {
+    req.flash("error", "You must be logged in to post a review.");
+    return res.redirect(`/listings/${req.params.id}`);
+  }
   let listing = await Listing.findById(req.params.id); //url
   if (!listing) {
     throw new ExpressError(404, "Listing not found");
@@ -20,12 +24,16 @@ module.exports.createReview = async (req, res, next) => {
 };
 
 module.exports.destroyReview = async (req, res) => {
-  let { id, reviewsId } = req.params; //url
+  let { id, reviewsId } = req.params;
   const review = await Review.findById(reviewsId);
 
   // Check if review exists and user is logged in
-  if (!review || !req.user) {
-    req.flash("error", "You do not have permission to delete this review.");
+  if (!review) {
+    req.flash("error", "Review not found.");
+    return res.redirect(`/listings/${id}`);
+  }
+  if (!req.user) {
+    req.flash("error", "You must be logged in to delete a review.");
     return res.redirect(`/listings/${id}`);
   }
 

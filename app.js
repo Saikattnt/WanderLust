@@ -93,6 +93,11 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  res.locals.cartCount = req.session.cart ? req.session.cart.length : 0;
+  next();
+});
+
 // app.get("/demouser1", async (req, res) => {
 //   let fakeUSer = new User({
 //     email: "XYZ@gmail.com",
@@ -131,6 +136,10 @@ app.use("/", userRouter);
 
 app.post("/signup", (req, res) => {
   res.render("users/signup"); // or wherever your signup.ejs is located
+});
+
+app.get("/cart", (req, res) => {
+  res.redirect("/listings/cart");
 });
 
 // app.get("/testListings", async (req, res) =>{
