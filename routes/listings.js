@@ -6,6 +6,7 @@ const { listingSchema } = require("../schema.js"); // { obj } we req an object f
 const Listing = require("../models/listings.js");
 const { isLoggedIn } = require("../middleware.js");
 const listingController = require("../controllers/listings.js");
+const razorpay = require("../utils/razorpay");
 
 // Search route
 router.get("/search", wrapAsync(listingController.searchListings));
@@ -100,6 +101,21 @@ router.post("/rent/:id", (req, res) => {
   res.redirect(
     "/images/websites-why-you-should-never-use-under-construction-pages.jpg"
   );
+});
+
+router.post("/create-order", async (req, res) => {
+  const { amount } = req.body; // amount in paise (e.g., 50000 = ₹500)
+  const options = {
+    amount: amount,
+    currency: "INR",
+    receipt: "order_rcptid_" + Math.random().toString(36).substring(7),
+  };
+  try {
+    const order = await razorpay.orders.create(options);
+    res.json(order);
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
 module.exports = router;

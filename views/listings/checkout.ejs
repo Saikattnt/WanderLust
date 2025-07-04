@@ -1,7 +1,47 @@
 <%- layout("/layouts/boilerplate") %>
+
+<!-- Flatpickr CSS -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+/>
+
+<style>
+  .date-input {
+    max-width: 200px;
+    cursor: pointer;
+  }
+
+  .date-input::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    color: transparent;
+  }
+
+  .date-input::-moz-calendar-picker-indicator {
+    opacity: 0;
+    color: transparent;
+  }
+
+  .date-input::-ms-clear,
+  .date-input::-ms-expand {
+    display: none;
+  }
+
+  .date-input::placeholder {
+    font-weight: bold;
+    color: #333;
+  }
+</style>
+
 <div class="container mt-5">
   <h2>Checkout</h2>
-  <form id="checkoutForm" method="POST" action="/checkout">
+  <form
+    id="checkoutForm"
+    novalidate
+    class="needs-validation"
+    method="POST"
+    action="/checkout"
+  >
     <div class="mb-3">
       <label for="guestName" class="form-label">Guest Name</label>
       <input
@@ -10,8 +50,13 @@
         id="guestName"
         name="guestName"
         required
+        pattern="^[a-zA-Z\s]{2,50}$"
       />
+      <div class="invalid-feedback">
+        Please enter a valid name (letters and spaces only, 2-50 characters).
+      </div>
     </div>
+
     <div class="mb-3">
       <label for="guestEmail" class="form-label">Email</label>
       <input
@@ -21,7 +66,9 @@
         name="guestEmail"
         required
       />
+      <div class="invalid-feedback">Please enter a valid email address.</div>
     </div>
+
     <div class="mb-3">
       <label for="guestPhone" class="form-label">Phone</label>
       <input
@@ -30,75 +77,184 @@
         id="guestPhone"
         name="guestPhone"
         required
+        pattern="^[6-9]\d{9}$"
       />
+      <div class="invalid-feedback">
+        Please enter a valid 10-digit Indian phone number.
+      </div>
     </div>
+
     <div class="mb-3">
       <label for="checkIn" class="form-label">Check-In Date</label>
       <input
-        type="date"
-        class="form-control"
+        type="text"
+        class="form-control form-control-sm date-input"
         id="checkIn"
         name="checkIn"
         required
+        placeholder="2025-07-04"
       />
+      <div class="invalid-feedback">Please select a check-in date.</div>
     </div>
+
     <div class="mb-3">
       <label for="checkOut" class="form-label">Check-Out Date</label>
       <input
-        type="date"
-        class="form-control"
+        type="text"
+        class="form-control form-control-sm date-input"
         id="checkOut"
         name="checkOut"
         required
+        placeholder="2025-07-05"
       />
+      <div class="invalid-feedback">Please select a check-out date.</div>
     </div>
-    <button type="button" id="payBtn" class="btn btn-success">
-      Pay with Razorpay
-    </button>
+
+    <img
+      src="/images/razorpay.jpg"
+      id="payBtn"
+      alt="Pay with Razorpay"
+      style="
+        cursor: pointer;
+        display: block;
+        height: 80px;
+        max-width: 220px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+        transition: box-shadow 0.2s;
+      "
+      tabindex="0"
+      onmouseover="this.style.boxShadow='0 4px 16px rgba(44,62,80,0.16)';"
+      onmouseout="this.style.boxShadow='0 2px 8px rgba(44,62,80,0.08)';"
+    />
   </form>
 </div>
 
 <!-- Razorpay script -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <script>
-  document.getElementById("payBtn").onclick = function (e) {
+  // Bootstrap validation
+  (function () {
+    "use strict";
+    var form = document.getElementById("checkoutForm");
+    form.addEventListener(
+      "submit",
+      function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add("was-validated");
+      },
+      false
+    );
+  })();
+
+  // Set dynamic placeholder for check-in and check-out
+  window.addEventListener("DOMContentLoaded", function () {
+    const checkInInput = document.getElementById("checkIn");
+    const checkOutInput = document.getElementById("checkOut");
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+
+    // Format as yyyy-mm-dd
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+
+    const yyyy2 = tomorrow.getFullYear();
+    const mm2 = String(tomorrow.getMonth() + 1).padStart(2, "0");
+    const dd2 = String(tomorrow.getDate()).padStart(2, "0");
+    const tomorrowStr = `${yyyy2}-${mm2}-${dd2}`;
+
+    checkInInput.placeholder = todayStr;
+    checkOutInput.placeholder = tomorrowStr;
+  });
+
+  // Flatpickr initialization
+  flatpickr("#checkIn", {
+    dateFormat: "Y-m-d",
+    minDate: "today",
+    onChange: function (selectedDates) {
+      const checkOutPicker = document.getElementById("checkOut")._flatpickr;
+      if (selectedDates[0]) {
+        const nextDay = new Date(selectedDates[0]);
+        nextDay.setDate(nextDay.getDate() + 1);
+        checkOutPicker.setDate(nextDay);
+        checkOutPicker.set("minDate", nextDay);
+      }
+    },
+  });
+
+  flatpickr("#checkOut", {
+    dateFormat: "Y-m-d",
+    minDate: new Date().fp_incr(1),
+  });
+
+  // Razorpay Handler
+  document.getElementById("payBtn").onclick = async function (e) {
     e.preventDefault();
-    // Collect form data
     const form = document.getElementById("checkoutForm");
-    const formData = new FormData(form);
-    // You should send this data to your backend to create an order and get order_id
-    // For demo, we'll use dummy data
-    fetch("/create-order", {
-      method: "POST",
-      body: formData,
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        var options = {
-          key: "<YOUR_RAZORPAY_KEY_ID>", // Enter the Key ID generated from the Dashboard
-          amount: data.amount, // Amount is in currency subunits. Default currency is INR.
-          currency: "INR",
-          name: "Wanderlust Booking",
-          description: "Room Booking Payment",
-          order_id: data.order_id, // Pass the order_id returned by Razorpay
-          handler: function (response) {
-            // You can submit the form or redirect after payment success
-            alert(
-              "Payment successful! Payment ID: " + response.razorpay_payment_id
-            );
-            form.submit();
-          },
-          prefill: {
-            name: formData.get("guestName"),
-            email: formData.get("guestEmail"),
-            contact: formData.get("guestPhone"),
-          },
-          theme: {
-            color: "#3399cc",
-          },
-        };
-        var rzp1 = new Razorpay(options);
-        rzp1.open();
+
+    form.classList.add("was-validated");
+    if (!form.checkValidity()) {
+      return;
+    }
+
+    const data = {
+      guestName: form.guestName.value.trim(),
+      guestEmail: form.guestEmail.value.trim(),
+      guestPhone: form.guestPhone.value.trim(),
+      checkIn: form.checkIn.value,
+      checkOut: form.checkOut.value,
+    };
+
+    try {
+      const res = await fetch("/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       });
+
+      const result = await res.json();
+
+      if (result.error) {
+        alert("Error creating order: " + result.error);
+        return;
+      }
+
+      const options = {
+        key: "rzp_test_StWgYRRNCChFMp", // Replace with real Razorpay key
+        amount: result.amount,
+        currency: "INR",
+        name: "Wanderlust Booking",
+        description: "Room Booking Payment",
+        order_id: result.order_id,
+        handler: function (response) {
+          alert("Payment successful! ID: " + response.razorpay_payment_id);
+          form.submit();
+        },
+        prefill: {
+          name: data.guestName,
+          email: data.guestEmail,
+          contact: data.guestPhone,
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+
+      const rzp1 = new Razorpay(options);
+      rzp1.open();
+    } catch (err) {
+      console.error("Payment failed:", err);
+      alert("Something went wrong. Please try again.");
+    }
   };
 </script>

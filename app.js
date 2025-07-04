@@ -24,6 +24,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 const userRouter = require("./routes/user.js");
+const paymentRouter = require("./routes/payment"); // if you create a new file
 
 const dbUrl = process.env.ATLASDB_URL;
 
@@ -133,6 +134,7 @@ const validateReview = (req, res, next) => {
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
 app.use("/", userRouter);
+app.use("/", paymentRouter);
 
 app.post("/signup", (req, res) => {
   res.render("users/signup"); // or wherever your signup.ejs is located
