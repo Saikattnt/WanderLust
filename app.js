@@ -142,6 +142,24 @@ app.get("/cart", (req, res) => {
   res.redirect("/listings/cart");
 });
 
+app.get("/checkout", (req, res) => {
+  res.render("listings/checkout");
+});
+
+app.get("/privacy-policy", (req, res) => res.render("listings/privacy"));
+app.get("/terms-and-conditions", (req, res) => res.render("listings/terms"));
+app.get("/cancellation-and-refund", (req, res) =>
+  res.render("listings/cancellation")
+);
+app.get("/shipping-and-delivery", (req, res) =>
+  res.render("listings/delivery")
+);
+app.get("/contact-us", (req, res) => res.render("listings/contact"));
+
+app.get("/terms", (req, res) => {
+  res.render("listings/terms");
+});
+
 // app.get("/testListings", async (req, res) =>{
 //     let sampleListing = new Listing({
 //         title: "My new Villa",
@@ -157,7 +175,7 @@ app.get("/cart", (req, res) => {
 // });
 
 // app.all("*", (req, res, next) => {
-//   next(new ExpressError(404, "Page not Found!"));
+//   next(new ExpressError(404......, "Page not Found!"));
 // });
 
 app.use((err, req, res, next) => {

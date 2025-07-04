@@ -1,0 +1,104 @@
+<%- layout("/layouts/boilerplate") %>
+<div class="container mt-5">
+  <h2>Checkout</h2>
+  <form id="checkoutForm" method="POST" action="/checkout">
+    <div class="mb-3">
+      <label for="guestName" class="form-label">Guest Name</label>
+      <input
+        type="text"
+        class="form-control"
+        id="guestName"
+        name="guestName"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="guestEmail" class="form-label">Email</label>
+      <input
+        type="email"
+        class="form-control"
+        id="guestEmail"
+        name="guestEmail"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="guestPhone" class="form-label">Phone</label>
+      <input
+        type="tel"
+        class="form-control"
+        id="guestPhone"
+        name="guestPhone"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="checkIn" class="form-label">Check-In Date</label>
+      <input
+        type="date"
+        class="form-control"
+        id="checkIn"
+        name="checkIn"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="checkOut" class="form-label">Check-Out Date</label>
+      <input
+        type="date"
+        class="form-control"
+        id="checkOut"
+        name="checkOut"
+        required
+      />
+    </div>
+    <button type="button" id="payBtn" class="btn btn-success">
+      Pay with Razorpay
+    </button>
+  </form>
+</div>
+
+<!-- Razorpay script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  document.getElementById("payBtn").onclick = function (e) {
+    e.preventDefault();
+    // Collect form data
+    const form = document.getElementById("checkoutForm");
+    const formData = new FormData(form);
+    // You should send this data to your backend to create an order and get order_id
+    // For demo, we'll use dummy data
+    fetch("/create-order", {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        var options = {
+          key: "<YOUR_RAZORPAY_KEY_ID>", // Enter the Key ID generated from the Dashboard
+          amount: data.amount, // Amount is in currency subunits. Default currency is INR.
+          currency: "INR",
+          name: "Wanderlust Booking",
+          description: "Room Booking Payment",
+          order_id: data.order_id, // Pass the order_id returned by Razorpay
+          handler: function (response) {
+            // You can submit the form or redirect after payment success
+            alert(
+              "Payment successful! Payment ID: " + response.razorpay_payment_id
+            );
+            form.submit();
+          },
+          prefill: {
+            name: formData.get("guestName"),
+            email: formData.get("guestEmail"),
+            contact: formData.get("guestPhone"),
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+      });
+  };
+</script>
