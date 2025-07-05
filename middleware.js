@@ -1,9 +1,17 @@
 function isLoggedIn(message) {
   return (req, res, next) => {
-    // console.log(req.path, "..", req.originalUrl); // path = /new the path user trying to access
-    // // req.originalUrl is the complete url we are trying to access
-    //req.user trigger isAuthenticated to check whether the user is logged in or not
     if (!req.isAuthenticated()) {
+      const wantsJSON =
+        req.xhr ||
+        (req.headers.accept &&
+          req.headers.accept.toLowerCase().includes("application/json"));
+
+      if (wantsJSON) {
+        return res
+          .status(401)
+          .json({ error: message || "You must be logged in" });
+      }
+
       req.session.redirectUrl = req.originalUrl;
       req.flash("error", message);
       return res.redirect("/login");

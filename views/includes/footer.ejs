@@ -1,20 +1,47 @@
-<footer class="footer">
-  <div class="f-info">
-    <div class="f-info-left">
-      <span>&copy; 2025 Wanderlust Private Limited</span>
-      <a href="/privacy-policy">Privacy Policy</a>
-      <a href="/terms">Terms & Conditions</a>
-      <a href="/contact-us">Contact Us</a>
-    </div>
-    <div class="f-info-right">
-      <i class="fa-solid fa-globe"></i> English (IN) <span>&#8377;</span> INR
-      <a href="https://www.facebook.com"
-        ><i class="fa-brands fa-square-facebook"></i
-      ></a>
-      <a href="https://x.com/"><i class="fa-brands fa-x-twitter"></i></a>
-      <a href="https://www.instagram.com/ig_saikatt/"
-        ><i class="fa-brands fa-instagram"></i
-      ></a>
+<style>
+  footer {
+    background-color: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    padding: 1.5rem 1rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  footer .footer-container {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  footer a {
+    color: #6b7280;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  footer a:hover {
+    color: #111827;
+  }
+
+  @media (max-width: 576px) {
+    footer .footer-container {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+</style>
+
+<footer>
+  <div class="footer-container">
+    <div>© 2025 Wanderlust Private Limited</div>
+    <div>
+      <a href="/privacy-policy" class="me-3">Privacy Policy</a>
+      <a href="/terms-and-conditions" class="me-3">Terms</a>
+      <a href="/contact-us">Contact</a>
     </div>
   </div>
 </footer>

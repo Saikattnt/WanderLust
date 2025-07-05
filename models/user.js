@@ -20,8 +20,19 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now, // to set the current date and time when the user is created
   },
-
+  cart: [
+    {
+      id: {
+        type: String,
+        required: true,
+      },
+      price: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
 });
 
-UserSchema.plugin(passportLocalMongoose, {usernameLowerCase: false}); // //we used plug in for the "passport-local-mongoose" to automatically create username and hashing and salt function
+UserSchema.plugin(passportLocalMongoose, { usernameLowerCase: false }); // //we used plug in for the "passport-local-mongoose" to automatically create username and hashing and salt function
 module.exports = mongoose.model("User", UserSchema);

@@ -1,96 +1,122 @@
 <%- layout("/layouts/boilerplate") %>
-  <div class="row mt-3">
-    <div class="col-8 offset-2"> <!--offset-->
-  <body>
-    <br>
-    <h3>Create a New Listing</h3>
-    <form method="POST" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
-      <div class="mb-3"> <!--margin bottom-3-->
-        <label for="title" class="form-label">Title</label>
-        <input name="listing[title]" 
-        placeholder="Provide your title" 
-        type="text" 
-        class="form-control" 
-        required />
-        <div class="valid-feedback">
-          Title aprroved!
+
+<div class="container">
+  <div class="row justify-content-center mb-4">
+    <div class="col-lg-8">
+      <h3 class="mb-4">Create a New Listing</h3>
+      <form
+        method="POST"
+        action="/listings"
+        class="needs-validation"
+        novalidate
+        enctype="multipart/form-data"
+      >
+        <div class="mb-3">
+          <label for="title" class="form-label">Title</label>
+          <input
+            type="text"
+            name="listing[title]"
+            class="form-control"
+            placeholder="Provide your title"
+            required
+          />
+          <div class="invalid-feedback">Provide a title!</div>
         </div>
-        <div class="invalid-feedback">
-          Provide a title!
+
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea
+            name="listing[description]"
+            class="form-control"
+            placeholder="Enter a short description"
+            required
+          ></textarea>
+          <div class="invalid-feedback">Enter a short description!</div>
         </div>
-      </div>
-      <div class="mb-3">
-        <label for="description"class="form-label">Description</label>
-        <textarea name="listing[description]" class="form-control" required></textarea>
-         <div class="valid-feedback">
-          Description approved!
+
+        <div class="mb-3">
+          <label for="image" class="form-label">Upload Image</label>
+          <input
+            type="file"
+            name="listing[image][url]"
+            class="form-control"
+            required
+          />
         </div>
-        <div class="invalid-feedback">
-          Enter a short Description!
+
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input
+              type="number"
+              name="listing[price]"
+              class="form-control"
+              placeholder="Enter your pricing"
+              required
+            />
+            <div class="invalid-feedback">Provide the price!</div>
+          </div>
+
+          <div class="col-md-8 mb-3">
+            <label for="country" class="form-label">Country</label>
+            <input
+              type="text"
+              name="listing[country]"
+              class="form-control"
+              placeholder="Enter the country name"
+              required
+            />
+            <div class="invalid-feedback">Provide the country name!</div>
+          </div>
         </div>
-      </div>
-       <div class="mb-3">
-        <label for="image" class="form-label">Upload Image</label>
-        <input
-          name="listing[image][url]"
-          type="file"
-          class="form-control"
-          required
-        />
-      </div>
-      <div class="row">
-        <div class="mb-3 col-md-4">
-        <label for="price" class="form-label">Price</label>
-        <input name="listing[price]" 
-        placeholder="Enter Your Pricing" 
-        class="form-control"
-        required
-        />
-        <div class="invalid-feedback">
-          Provide the Price!
+
+        <div class="mb-3">
+          <label for="location" class="form-label">Location</label>
+          <input
+            type="text"
+            name="listing[location]"
+            class="form-control"
+            placeholder="Enter your location"
+            required
+          />
+          <div class="invalid-feedback">Provide the location!</div>
         </div>
-      </div>
-      <div class="mb-3 col-md-8">
-        <label for="country" class="form-label">Country</label>
-        <input name="listing[country]" 
-        placeholder="Enter the country name" 
-        type="text" 
-        class="form-control"
-        required
-        />
-        <div class="invalid-feedback">
-          Provide the Country name!
+
+        <div class="mb-4">
+          <label for="category" class="form-label">Category</label>
+          <select class="form-select" name="listing[category]" required>
+            <option value="">Select a category</option>
+            <option value="Beach">Beach</option>
+            <option value="Mountain">Mountain</option>
+            <option value="Forest">Forest</option>
+            <option value="Room">Room</option>
+          </select>
         </div>
-      </div>
-      </div>
-    
-      <div class="mb-3">
-        <label for="location" class="form-label">Location</label>
-        <input
-          name="listing[location]"
-          placeholder="Enter Your Location"
-          type="text" 
-          class="form-control"
-          required
-        />
-        <div class="invalid-feedback">
-          Provide the location!
-        </div>
-      </div>
-      <div class="mb-3">
-        <label for="category" class="form-label">Category</label>
-        <select class="form-select" id="category" name="listing[category]" required>
-          <option value="">Select a category</option>
-          <option value="Beach">Beach</option>
-          <option value="Mountain">Mountain</option>
-          <option value="Forest">Forest</option>
-          <option value="Room">Room</option>
-        </select>
-      </div>
-      <br /><br />
-      <button class="btn add-btn btn-dark mb-3">Add</button>
-      <br><br>
-    </form>
+
+        <button type="submit" class="btn btn-dark px-4 py-2">
+          Add Listing
+        </button>
+      </form>
     </div>
-    </div>
-  </body>
+  </div>
+</div>
+
+<script>
+  // Enable Bootstrap validation styles
+  (() => {
+    const forms = document.querySelectorAll(".needs-validation");
+    Array.from(forms).forEach((form) => {
+      form.addEventListener(
+        "submit",
+        (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add("was-validated");
+        },
+        false
+      );
+    });
+  })();
+</script>

@@ -13,6 +13,9 @@ module.exports.signUp = async (req, res) => {
       if (err) {
         return next(err);
       }
+      if (req.user && req.user.cart) {
+        req.session.cart = req.user.cart;
+      }
       req.flash("success", "Welcome to your dreamestination");
       res.redirect("/listings");
     });
@@ -28,6 +31,9 @@ module.exports.renderLogInForm = (req, res) => {
 };
 
 module.exports.logIN = async (req, res) => {
+  if (req.user && req.user.cart) {
+    req.session.cart = req.user.cart;
+  }
   req.flash("success", "Welcome to Wanderlust!Ready for a trip again!");
   res.redirect("/listings"); // Redirect to requested url after successful login
 };

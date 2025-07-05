@@ -1,96 +1,110 @@
-<style>
-  .btn-search {
-    background-color: #f5777b;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 25px;
-    padding: 0 1rem 0 1rem;
-  }
-  .btn-search:hover {
-    background-color: #fe424d;
-  }
-
-  .btn-search i {
-    display: inline;
-    margin-right: 0.5rem;
-  }
-  .search-input {
-    border-radius: 25px;
-    padding: 0.5rem 1rem;
-    border: 1px solid #ccc;
-    width: 300px;
-  }
-
-  /* Add to your style.css or in a <style> block */
-  .nav-link .badge {
-    pointer-events: none;
-  }
-</style>
-<nav class="navbar navbar-expand-md custom-navbar border-bottom sticky-top">
-  <div class="container-fluid">
-    <a class="navbar-brand d-flex align-items-center gap-2" href="/listings">
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+  <div
+    class="container-fluid px-lg-5 py-2 d-flex justify-content-between align-items-center"
+  >
+    <a
+      class="navbar-brand fw-bold text-danger d-flex align-items-center gap-2"
+      href="/"
+    >
       <img
         src="/images/plane.jpg"
-        alt="plane icon"
-        style="width: 32px; height: 32px; object-fit: cover; border-radius: 50%"
+        alt="logo"
+        width="28"
+        height="28"
+        class="rounded-circle"
       />
-      <span class="logo-text">wanderlust</span>
+      wanderlust
     </a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNavAltMarkup"
-      aria-controls="navbarNavAltMarkup"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div
-      class="collapse navbar-collapse justify-content-center"
-      id="navbarNavAltMarkup"
-    >
-      <div class="nav-box me-auto">
-        <a class="nav-link" href="/listings">Explore</a>
-      </div>
-      <div class="navbar-nav">
-        <form class="d-flex navbar-nav" action="/listings/search" method="GET">
-          <input
-            class="form-control me-2 search-input"
-            type="search"
-            name="q"
-            placeholder="Search destination"
-          />
-          <button class="btn btn-search" type="submit">
-            <i class="fa-solid fa-magnifying-glass"></i>Search
-          </button>
-        </form>
-      </div>
-      <div class="nav-box ms-auto">
-        <a class="nav-link position-relative" href="/listings/cart">
-          <img
-            src="/images/CartLogo.jpg"
-            alt="Cart"
-            style="width: 28px; height: 28px; object-fit: cover"
-          />
-          Cart
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.7em; <%= cartCount > 0 ? '' : 'display:none;' %>">
-            <%= cartCount %>
-          </span>
-        </a>
-        <span class="nav-divider">|</span>
-        <a class="nav-link" href="/listings/new">Add New Listings</a>
-        <span class="nav-divider" style="margin-left: 8px">|</span>
-        <% if (!user) { %>
-        <a class="nav-link" href="/signup"><b>SignUp</b></a>
-        <span class="nav-divider">|</span>
-        <a class="nav-link" href="/login"><b>LogIn</b></a>
-        <% } else { %>
+    <a href="/listings" class="btn btn-light px-3">Explore</a>
 
-        <a class="nav-link" href="/logout"><b>Logout</b></a>
-        <span class="nav-divider">|</span>
-        <% } %>
+    <form
+      class="d-none d-md-flex mx-auto w-50"
+      role="search"
+      action="/listings/search"
+      method="GET"
+    >
+      <input
+        class="form-control rounded-start-pill border-end-0"
+        type="search"
+        name="q"
+        placeholder="Search destination"
+        aria-label="Search"
+      />
+      <button
+        class="btn btn-danger rounded-end-pill border-start-0 px-4"
+        type="submit"
+      >
+        <i class="fa fa-search me-1"></i> Search
+      </button>
+    </form>
+
+    <div class="d-flex align-items-center gap-3">
+      <a href="/listings/cart" class="btn btn-light px-3 position-relative">
+        <i class="fa fa-shopping-cart cart-icon"></i>
+        Cart
+        <span
+          id="cart-badge"
+          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+          style="<%= cartCount > 0 ? '' : 'display:none;' %>"
+        >
+          <%= cartCount %>
+        </span>
+      </a>
+      <a href="/listings/new" class="btn btn-light px-3">Add New Listings</a>
+
+      <% if (!currentUser) { %>
+      <a
+        href="/login"
+        class="btn text-dark fw-medium px-2"
+        style="text-decoration: none"
+        >Login</a
+      >
+      <a
+        href="/signup"
+        class="btn text-dark fw-medium px-2"
+        style="text-decoration: none"
+        >Sign Up</a
+      >
+      <% } else { %>
+      <div class="dropdown">
+        <button
+          class="btn btn-outline-dark dropdown-toggle"
+          type="button"
+          id="navbarDropdown"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <%= currentUser.username %>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="/logout">Logout</a></li>
+        </ul>
       </div>
+      <% } %>
     </div>
   </div>
 </nav>
+
+<style>
+  .cart-icon.spin {
+    animation: spin 0.6s linear;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .add-to-cart-btn.spin {
+    pointer-events: none;
+    opacity: 0.75;
+  }
+
+  .add-to-cart-btn .fa-spinner {
+    margin-left: 8px;
+  }
+</style>

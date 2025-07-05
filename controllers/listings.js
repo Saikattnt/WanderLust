@@ -112,37 +112,92 @@ module.exports.searchListings = async (req, res) => {
 
 // Show Cart Page
 module.exports.showCart = async (req, res) => {
-  // Get cart from session (array of listing IDs)
-  const cart = req.session.cart || [];
+  // Ensure cart is an array of objects
+  let cart = req.session.cart || [];
+  if (!Array.isArray(cart)) cart = [];
+  cart = cart.filter((item) => item && item.id);
+
   // Fetch listings in the cart
-  const cartListings = await Listing.find({ _id: { $in: cart } });
-  res.render("listings/cart.ejs", { cartListings });
+  const cartListings = await Listing.find({
+    _id: { $in: cart.map((item) => item.id) },
+  });
+
+  // Clean up session cart to only include valid listing objects
+  req.session.cart = cartListings.map((listing) => {
+    const cartItem = cart.find((item) => item.id === listing._id.toString());
+    return {
+      id: listing._id.toString(),
+      price: cartItem ? cartItem.price : listing.price,
+    };
+  });
+
+  res.render("listings/cart.ejs", {
+    cartListings,
+    cartCount: cartListings.length,
+    sessionCart: req.session.cart || [],
+  });
 };
 
 // Add to Cart Handler
 module.exports.addToCart = async (req, res) => {
-  const { id } = req.params;
-  if (!req.session.cart) req.session.cart = [];
-  if (!req.session.cart.includes(id)) {
-    req.session.cart.push(id);
+  try {
+    console.log("===== ADD TO CART START =====");
+    console.log("Session User:", req.user);
+    console.log("Session Cart:", req.session.cart);
+    console.log("Body:", req.body);
+    console.log("Params:", req.params);
+
+    const { id } = req.params;
+    let { price } = req.body;
+    price = Number(price);
+
+    if (!price) {
+      return res.status(400).json({ error: "Missing price" });
+    }
+
+    if (!req.session.cart) {
+      req.session.cart = [];
+    }
+
+    const stringId = id.toString();
+
+    if (!req.session.cart.some((item) => item.id === stringId)) {
+      req.session.cart.push({ id: stringId, price });
+    }
+
+    req.session.cart = req.session.cart.filter(
+      (item, index, self) => index === self.findIndex((t) => t.id === item.id)
+    );
+
+    if (req.user) {
+      req.user.cart = req.session.cart;
+      await req.user.save();
+    }
+
+    const cartCount = req.session.cart.length;
+    console.log("Cart updated successfully", req.session.cart);
+    return res.json({ message: "Listing added to cart!", cartCount });
+  } catch (err) {
+    console.error("❌ ERROR IN ADD TO CART:", err);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
-  const cartCount = req.session.cart.length;
-  if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-    // AJAX request: respond with JSON
-    return res.json({
-      message: "Listing added to cart!",
-      cartCount
-    });
-  }
-  req.flash("success", "Listing added to cart!");
-  res.redirect(`/listings/${id}`);
 };
 
 // Remove from Cart Handler
 module.exports.removeFromCart = async (req, res) => {
   const { id } = req.params;
   if (req.session.cart) {
-    req.session.cart = req.session.cart.filter(listingId => listingId.toString() !== id.toString());
+    req.session.cart = req.session.cart.filter(
+      (item) => item.id !== id.toString()
+    );
+    // Deduplicate by id
+    req.session.cart = [
+      ...new Map(req.session.cart.map((item) => [item.id, item])).values(),
+    ];
+    if (req.user) {
+      req.user.cart = req.session.cart;
+      await req.user.save();
+    }
   }
   req.flash("success", "Listing removed from cart!");
   res.redirect("/listings/cart");

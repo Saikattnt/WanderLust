@@ -1,94 +1,125 @@
 <%- layout("/layouts/boilerplate") %>
-<body>
-  <style>
-    #filters {
-      display: flex;
-      flex-wrap: wrap;
-      text-align: center;
-      gap: 3rem;
-    } 
-    .filter {
-      margin-top: 2rem;
-      opacity: 0.8;
-    }
+<style>
+  #filters {
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+    gap: 2rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
 
-    .filter:hover {
-      opacity: 1;
-      cursor: pointer;
-    }
+  .filter {
+    color: #4b5563;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+  }
 
-    .tax-toggle {
-      border: 1px solid #f1eded;
-      border-radius: 2rem;
-      border-left-width: 12px;
-      border-right-width: 12px;
-      height: 2.5rem;
-    }
-  </style>
-    <div id="filters">
-      <a href="/listings/category/Beach" class="filter nav-link">
-        <div><i class="fa-solid fa-umbrella-beach"></i></div>
-        <p>Beach</p>
-      </a>
-      <a href="/listings/category/Mountain" class="filter nav-link">
-        <div><i class="fa-solid fa-mountain"></i></div>
-        <p>Mountain</p>
-      </a>
-      <a href="/listings/category/Forest" class="filter nav-link">
-        <div><i class="fa-solid fa-tree"></i></div>
-        <p>Forest</p>
-      </a>
-      <a href="/listings/category/Room" class="filter nav-link">
-        <div><i class="fa-solid fa-house"></i></div>
-        <p>Room</p>
-      </a>
-      <a href="/listings/category/Trending" class="filter nav-link">
-        <div><i class="fa-solid fa-house-fire"></i></div>
-        <p>Trending</p>
-      </a>
-      <div class="tax-toggle mt-5 mx-auto">
-      <div class="form-check form-switch form-check-reverse mt-1">
-  <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
-  <label class="form-check-label " for="switchCheckDefault">Display total amount after tax</label>
+  .filter:hover {
+    color: #1f2937;
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+
+  .tax-toggle {
+    border: 1px solid #e5e7eb;
+    border-radius: 2rem;
+    padding: 0.5rem 1rem;
+    background-color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+
+  .listing-card {
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .listing-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .listing-card img {
+    object-fit: cover;
+    height: 220px;
+    width: 100%;
+  }
+</style>
+
+<div id="filters">
+  <a href="/listings/category/Beach" class="filter nav-link">
+    <div><i class="fa-solid fa-umbrella-beach"></i></div>
+    <p>Beach</p>
+  </a>
+  <a href="/listings/category/Mountain" class="filter nav-link">
+    <div><i class="fa-solid fa-mountain"></i></div>
+    <p>Mountain</p>
+  </a>
+  <a href="/listings/category/Forest" class="filter nav-link">
+    <div><i class="fa-solid fa-tree"></i></div>
+    <p>Forest</p>
+  </a>
+  <a href="/listings/category/Room" class="filter nav-link">
+    <div><i class="fa-solid fa-house"></i></div>
+    <p>Room</p>
+  </a>
+  <a href="/listings/category/Trending" class="filter nav-link">
+    <div><i class="fa-solid fa-house-fire"></i></div>
+    <p>Trending</p>
+  </a>
+  <div class="tax-toggle mt-3">
+    <div class="form-check form-switch form-check-reverse">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        role="switch"
+        id="switchCheckDefault"
+      />
+      <label class="form-check-label" for="switchCheckDefault">
+        Show total with tax (18%)
+      </label>
+    </div>
+  </div>
 </div>
-    </div>
-    </div>
-    
-     <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3"> <!--for large 3 cards will appear, for md 2 cards, for small 1-->
-        <% for(let listing of allListings) { %>
-            <a href="/listings/<%= listing._id %>" class="listing-link">
-            <div class="card col listing-card">
-                <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image" style="height: 20rem;">
-                <div class="card-img-overlay"></div>
-                <div class="card-body">
-                  <p class="card-text">
-                    <b><%= listing.title %></b> <br>
-                    <% if (listing.price) { %>
-  <span class="listing-price">₹<%= listing.price.toLocaleString("en-IN") %></span> per night <br>
-<% } else { %>
-  N/A per night <br>
-<% } %>
-                </p>
-                </div>
-            </div>
-            </a>
-        <% } %>
-    </div>
-    <script>
-  // Get the toggle switch
+
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+  <% for(let listing of allListings) { %>
+  <div class="col">
+    <a href="/listings/<%= listing._id %>" class="listing-card d-block">
+      <div class="card h-100">
+        <img
+          src="<%= listing.image.url %>"
+          class="card-img-top"
+          alt="listing image"
+        />
+        <div class="card-body">
+          <h5 class="card-title mb-1"><%= listing.title %></h5>
+          <p class="card-text">
+            <% if (listing.price) { %>
+            <span class="listing-price"
+              >₹<%= listing.price.toLocaleString("en-IN") %></span
+            >
+            / night <% } else { %> <span>N/A</span> / night <% } %>
+          </p>
+        </div>
+      </div>
+    </a>
+  </div>
+  <% } %>
+</div>
+
+<script>
   const taxSwitch = document.getElementById("switchCheckDefault");
-
-  // Get all price elements
-  const priceElements = document.querySelectorAll(".card-text .listing-price");
-
-  // Store original prices
   const originalPrices = [];
 
-  // On page load, store the original prices
   document.querySelectorAll(".card-text").forEach((el, idx) => {
-    const priceText = el.innerHTML.match(/₹([\d,]+)/);
-    if (priceText) {
-      originalPrices[idx] = priceText[1].replace(/,/g, "");
+    const match = el.textContent.match(/₹([\d,]+)/);
+    if (match) {
+      originalPrices[idx] = match[1].replace(/,/g, "");
     } else {
       originalPrices[idx] = null;
     }
@@ -100,15 +131,17 @@
       if (!price) return;
       price = parseFloat(price);
       if (this.checked) {
-        // Add 18% GST
-        const gstPrice = Math.round(price * 1.18);
-        el.innerHTML = el.innerHTML.replace(/₹[\d,]+/, "₹" + gstPrice.toLocaleString("en-IN"));
+        const gst = Math.round(price * 1.18);
+        el.innerHTML = el.innerHTML.replace(
+          /₹[\d,]+/,
+          "₹" + gst.toLocaleString("en-IN")
+        );
       } else {
-        // Revert to original price
-        el.innerHTML = el.innerHTML.replace(/₹[\d,]+/, "₹" + Number(price).toLocaleString("en-IN"));
+        el.innerHTML = el.innerHTML.replace(
+          /₹[\d,]+/,
+          "₹" + Number(price).toLocaleString("en-IN")
+        );
       }
     });
   });
 </script>
-  </body>
-</html>

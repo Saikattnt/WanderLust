@@ -5,6 +5,7 @@ if (process.env.NODE_ENV != "production") {
 
 console.log(process.env.SECRET);
 //we can access the environment variables from env by using process.env.SECRET
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -41,6 +42,8 @@ main()
   });
 
 app.set("view engine", "ejs");
+app.use(express.json());
+
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodoverride("_method"));
@@ -77,6 +80,11 @@ app.use(flash());
 
 app.use(passport.initialize()); //a middleware that initialize passport
 app.use(passport.session());
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user || null; // if you're using Passport
+  res.locals.cartCount = req.session.cart ? req.session.cart.length : 0;
+  next();
+});
 passport.use(new LocalStrategy(User.authenticate())); //all the user auhteticate by the LocalStrategy and User.autheticate is used for authetication
 
 passport.serializeUser(User.serializeUser()); // to store all the related info of the user i.e serialize user into the session
