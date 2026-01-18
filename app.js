@@ -29,7 +29,16 @@ const paymentRouter = require("./routes/payment"); // if you create a new file
 
 const dbUrl = process.env.ATLASDB_URL;
 
+if (!dbUrl) {
+  console.error("FATAL ERROR: ATLASDB_URL is not defined.");
+}
+
 async function main() {
+  console.log("Connecting to DB...");
+  // Log the URL without credentials for debugging
+  const dbUrlMasked = dbUrl ? dbUrl.replace(/\/\/.*@/, "//***:***@") : "undefined";
+  console.log(`Using DB URL: ${dbUrlMasked}`);
+  
   await mongoose.connect(dbUrl);
 }
 
@@ -38,7 +47,7 @@ main()
     console.log("Connected to DB");
   })
   .catch((err) => {
-    console.log(err);
+    console.log("DB Connection Error:", err);
   });
 
 app.set("view engine", "ejs");
