@@ -195,6 +195,6 @@ app.use((err, req, res, next) => {
   // res.status(statusCode).send(message);
 });
 
-app.listen(8000, () => {
-  console.log("server is listening to port 8000");
+app.listen(process.env.PORT || 8000, () => {
+  console.log(`server is listening to port ${process.env.PORT || 8000}`);
 });
